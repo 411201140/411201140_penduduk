@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Province;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProvinceController extends Controller
 {
@@ -16,7 +17,11 @@ class ProvinceController extends Controller
 
     public function store(Request $request)
     {
-        $province = Province::create($request->all());
+        $validatedData = $request->validate([
+            'name' => 'required|unique:provinces',
+        ]);
+
+        $province = Province::create($validatedData);
 
         return response()->json($province, 201);
     }
@@ -40,7 +45,11 @@ class ProvinceController extends Controller
             return response()->json(['message' => 'Province not found'], 404);
         }
 
-        $province->update($request->all());
+        $validatedData = $request->validate([
+            'name' => ['required', Rule::unique('provinces')->ignore($id)],
+        ]);
+
+        $province->update($validatedData);
 
         return response()->json($province);
     }
@@ -56,5 +65,11 @@ class ProvinceController extends Controller
         $province->delete();
 
         return response()->json(['message' => 'Province deleted']);
+    }
+
+    public function countAll()
+    {
+        $count = Province::count();
+        return response()->json(['count' => $count]);
     }
 }

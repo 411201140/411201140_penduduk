@@ -15,7 +15,11 @@ use Illuminate\Http\Request;
 
 Route::resource('provinces', 'ProvinceController');
 Route::resource('cities', 'CityController');
-Route::resource('penduduk', 'PendudukController');
+Route::resource('residents', 'ResidentController');
+
+Route::get('/provinces/getData/count', 'ProvinceController@countAll');
+Route::get('/cities/getData/count', 'CityController@countAll');
+Route::get('/residents/getData/count', 'ResidentController@countAll');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\City;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CityController extends Controller
 {
@@ -16,7 +17,12 @@ class CityController extends Controller
 
     public function store(Request $request)
     {
-        $city = City::create($request->all());
+        $validatedData = $request->validate([
+            'province_id' => 'required|exists:provinces,id',
+            'name' => 'required|unique:cities',
+        ]);
+
+        $city = City::create($validatedData);
 
         return response()->json($city, 201);
     }
@@ -40,7 +46,12 @@ class CityController extends Controller
             return response()->json(['message' => 'City not found'], 404);
         }
 
-        $city->update($request->all());
+        $validatedData = $request->validate([
+            'province_id' => 'required|exists:provinces,id',
+            'name' => ['required', Rule::unique('cities')->ignore($city->id)],
+        ]);
+
+        $city->update($validatedData);
 
         return response()->json($city);
     }
@@ -56,5 +67,11 @@ class CityController extends Controller
         $city->delete();
 
         return response()->json(['message' => 'City deleted']);
+    }
+    
+    public function countAll()
+    {
+        $count = City::count();
+        return response()->json(['count' => $count]);
     }
 }

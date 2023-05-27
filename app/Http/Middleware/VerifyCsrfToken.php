@@ -23,7 +23,7 @@ class VerifyCsrfToken extends Middleware
         '/provinces/*',
         '/cities',
         '/cities/*',
-        '/penduduk',
-        '/penduduk/*',
+        '/residents',
+        '/residents/*',
     ];
 }
